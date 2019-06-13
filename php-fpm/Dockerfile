@@ -6,6 +6,13 @@ FROM php:${D_PHP_VERSION}-fpm
 
 LABEL maintainer="mallor <mallor@163.com>"
 
+ARG D_CHANGE_SOURC_APTE=true
+RUN if [ ${D_CHANGE_SOURC_APTE} = true ]; then \
+    # Change application source from dl-cdn.alpinelinux.org to aliyun source
+   sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
+;fi
+RUN  apt-get clean
+
 ARG D_PHP_VERSION
 # always run apt update when start and after add new source list, then clean up at end.
 RUN set -xe; \
@@ -37,6 +44,12 @@ RUN set -xe; \
 
 #安装composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN  apt-get update && apt-get install -y --no-install-recommends && apt-get install librabbitmq-dev -y && \
+    # Install the amqp extension
+    pecl install amqp && \
+    docker-php-ext-enable amqp
+
 
 #安装第三方扩展
 ARG D_PHP_SWOOLE
@@ -141,6 +154,8 @@ RUN if [ ${D_PHP_VLD} ]; then \
     && rm -r vld* \
     && docker-php-ext-enable vld \
 ;fi
+
+
 
 
 #增加php-fpm外部配置文件

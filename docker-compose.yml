@@ -20,6 +20,8 @@ services:
           - D_PHP_XDEBUG=${PHP_XDEBUG}
           - D_PHP_VLD=${PHP_VLD}
           - D_PHP_CPHALCON7=${PHP_CPHALCON7}
+          #修改更新源
+          #- D_CHANGE_SOURC_APTE=true
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
         - ./php-fpm/mod:/usr/local/etc/php/conf.d/mod/
